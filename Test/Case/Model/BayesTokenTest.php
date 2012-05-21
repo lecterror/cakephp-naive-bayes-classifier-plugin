@@ -484,4 +484,118 @@ class BayesTokenTest extends CakeTestCase
 		$result = $this->BayesToken->tokenize($input);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * testTrain method
+ *
+ * @return void
+ */
+	public function testTrain()
+	{
+		$this->assertEqual($this->BayesToken->train('Enlarge your rolex!', 'spam'), true);
+
+		$expected = array
+			(
+				'BayesClass' => array
+				(
+					'id' => 1,
+					'label' => 'spam',
+					'vector_count' => 11
+				),
+			);
+
+		$result = $this->BayesToken->BayesClass->find('first', array('conditions' => array('label' => 'spam'), 'contain' => false));
+		$this->assertEqual($result, $expected);
+
+		$expected = array
+			(
+				array
+				(
+					'BayesToken' => array
+					(
+						'id' => 6,
+						'value' => 'enlarge'
+					),
+					'BayesTokenCounter' => array
+					(
+						array
+						(
+							'id' => 6,
+							'bayes_class_id' => 1,
+							'bayes_token_id' => 6,
+							'count' => 8
+						),
+					),
+				),
+				array
+				(
+					'BayesToken' => array
+					(
+						'id' => 5,
+						'value' => 'rolex'
+					),
+					'BayesTokenCounter' => array
+					(
+						array
+						(
+							'id' => 5,
+							'bayes_class_id' => 1,
+							'bayes_token_id' => 5,
+							'count' => 5
+						),
+					),
+				),
+				array
+				(
+					'BayesToken' => array
+					(
+						'id' => 22,
+						'value' => 'your'
+					),
+					'BayesTokenCounter' => array
+					(
+						array
+						(
+							'id' => 23,
+							'bayes_class_id' => 1,
+							'bayes_token_id' => 22,
+							'count' => 1
+						),
+					),
+				),
+			);
+
+		$result = $this->BayesToken->find
+			(
+				'all',
+				array
+				(
+					'contain' => array('BayesTokenCounter'),
+					'conditions' => array
+					(
+						'value' => array('enlarge', 'your', 'rolex')
+					),
+				)
+			);
+
+		$this->assertEqual($result, $expected);
+	}
+
+
+/**
+ * testClassify method
+ *
+ * @return void
+ */
+	public function testClassify()
+	{
+		$result = $this->BayesToken->classify('This is a perfectly normal sentence about Steam games');
+		$this->assertEqual($result, 'ham');
+
+		$result = $this->BayesToken->classify('Buy cheap replica watches for shits and giggles!');
+		$this->assertEqual($result, 'spam');
+
+		$result = $this->BayesToken->classify('ambiguous sentence of replica code');
+		$this->assertEqual($result, false);
+	}
 }
