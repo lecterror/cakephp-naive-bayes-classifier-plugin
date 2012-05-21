@@ -42,12 +42,12 @@ class ClassifierComponent extends Component
 	 * 
 	 * A threshold value of 1.5 means that the ratio between two highest classes must be at least 60% : 40%
 	 * 
-	 * When $document is successfully classified, the return value is an array of class id and label. When
+	 * When $document is successfully classified, the return value is the class label. When
 	 * classification does not succeed (class difference < threshold), the return value is boolean false.
 	 *
 	 * @param string $document Document to be classified
 	 * @param array $options Options affecting the way $text is classified (laplace_smoothing, threshold)
-	 * @return mixed Boolean false when $text could not be classified, otherwise, an array of class id and label
+	 * @return mixed Boolean false when $document could not be classified, otherwise a class label
 	 */
 	public function classify($document, array $options = array())
 	{
@@ -84,6 +84,21 @@ class ClassifierComponent extends Component
 			$P_final = $P_class;
 
 			if ($debug) { pr(sprintf('P(%s) = %f', $class_name, $P_class)); }
+				
+			$total_class_token_count = $this->BayesToken->getTokenCounters
+				(
+					array(),
+					array
+					(
+						'class' => $class['BayesClass']['id'],
+						'exclusive' => true,
+					)
+				);
+
+			if (!empty($total_class_token_count))
+			{
+				$total_class_token_count = count($total_class_token_count);
+			}
 
 			foreach ($new_tokens as $new_token => $new_count)
 			{
@@ -103,21 +118,6 @@ class ClassifierComponent extends Component
 				if (!empty($token))
 				{
 					$token_count = $token[0]['BayesTokenCounter'][0]['count'];
-				}
-				
-				$total_class_token_count = $this->BayesToken->getTokenCounters
-					(
-						array(),
-						array
-						(
-							'class' => $class['BayesClass']['id'],
-							'exclusive' => true,
-						)
-					);
-
-				if (!empty($total_class_token_count))
-				{
-					$total_class_token_count = count($total_class_token_count);
 				}
 
 				// $P_token = individual token probability
