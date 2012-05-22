@@ -11,6 +11,8 @@ class AllNaiveBayesClassifierTests extends PHPUnit_Framework_TestSuite
 
 		$suite->addTestFile(dirname(__FILE__).DS.'Controller'.DS.'Component'.DS.'ClassifierComponentTest.php');
 
+		$suite->addTestFile(dirname(__FILE__).DS.'Model'.DS.'Behavior'.DS.'ClassifiableBehaviorTest.php');
+
 		return $suite;
 	}
 }
