@@ -170,7 +170,7 @@ class BayesToken extends NaiveBayesClassifierAppModel
 
 			if (!empty($total_class_token_count))
 			{
-				$total_class_token_count = count($total_class_token_count);
+				$total_class_token_count = array_sum(Hash::extract($total_class_token_count, '{n}.BayesClassCounter.{n}.count'));
 			}
 
 			foreach ($new_tokens as $new_token => $new_count)
