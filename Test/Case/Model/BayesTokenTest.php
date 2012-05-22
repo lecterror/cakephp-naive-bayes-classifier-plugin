@@ -23,7 +23,7 @@ class BayesTokenTest extends CakeTestCase
 		(
 			'plugin.naive_bayes_classifier.bayes_class',
 			'plugin.naive_bayes_classifier.bayes_token',
-			'plugin.naive_bayes_classifier.bayes_token_counter'
+			'plugin.naive_bayes_classifier.bayes_token_counter',
 		);
 
 /**
@@ -582,6 +582,12 @@ class BayesTokenTest extends CakeTestCase
 	}
 
 
+	public function testUntrain()
+	{
+		$this->skipIf(true, '@TODO');
+	}
+
+
 /**
  * testClassify method
  *
@@ -596,6 +602,16 @@ class BayesTokenTest extends CakeTestCase
 		$this->assertEqual($result, 'spam');
 
 		$result = $this->BayesToken->classify('ambiguous sentence of replica code');
+		$this->assertEqual($result, false);
+
+		$result = $this->BayesToken->classify
+			(
+				'a bit less ambiguous sentence of cheap replica code, also, yello',
+				array
+				(
+					'threshold' => 2,
+				)
+			);
 		$this->assertEqual($result, false);
 	}
 }
