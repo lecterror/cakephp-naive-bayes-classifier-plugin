@@ -211,4 +211,78 @@ class ClassifierComponentTest extends CakeTestCase
 
 		$this->assertEqual($result, $expected);
 	}
+
+
+	public function testUntrain()
+	{
+		$this->assertEqual($this->Classifier->untrain('Enlarge your rolex!', 'spam'), true);
+
+		$expected = array
+			(
+				'BayesClass' => array
+				(
+					'id' => 1,
+					'label' => 'spam',
+					'vector_count' => 9
+				),
+			);
+
+		$result = $this->BayesToken->BayesClass->find('first', array('conditions' => array('label' => 'spam'), 'contain' => false));
+		$this->assertEqual($result, $expected);
+
+		$expected = array
+			(
+				array
+				(
+					'BayesToken' => array
+					(
+						'id' => 6,
+						'value' => 'enlarge'
+					),
+					'BayesTokenCounter' => array
+					(
+						array
+						(
+							'id' => 6,
+							'bayes_class_id' => 1,
+							'bayes_token_id' => 6,
+							'count' => 6
+						),
+					),
+				),
+				array
+				(
+					'BayesToken' => array
+					(
+						'id' => 5,
+						'value' => 'rolex'
+					),
+					'BayesTokenCounter' => array
+					(
+						array
+						(
+							'id' => 5,
+							'bayes_class_id' => 1,
+							'bayes_token_id' => 5,
+							'count' => 3
+						),
+					),
+				),
+			);
+
+		$result = $this->BayesToken->find
+			(
+				'all',
+				array
+				(
+					'contain' => array('BayesTokenCounter'),
+					'conditions' => array
+					(
+						'value' => array('enlarge', 'your', 'rolex')
+					),
+				)
+			);
+
+		$this->assertEqual($result, $expected);
+	}
 }

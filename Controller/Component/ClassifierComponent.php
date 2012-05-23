@@ -65,4 +65,22 @@ class ClassifierComponent extends Component
 	{
 		return $this->BayesToken->train($document, $class_label, $options);
 	}
+
+	/**
+	 * Removes tokens from a document from the train set. Returns true on success.
+	 *
+	 * $options param takes the following values:
+	 *
+	 *  - min_length: minimum token length, default 3
+	 *  - max_length: maximum token length, default 20
+	 *
+	 * @param string $document Document to untrain
+	 * @param string $class_label Class label assigned to the document
+	 * @param array $options Tokenizer options array
+	 * @see BayesToken::untrain()
+	 */
+	public function untrain($document, $class_label, $options = array())
+	{
+		return $this->BayesToken->untrain($document, $class_label, $options);
+	}
 }

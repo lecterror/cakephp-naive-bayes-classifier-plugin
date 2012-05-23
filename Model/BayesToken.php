@@ -34,6 +34,7 @@ class BayesToken extends NaiveBayesClassifierAppModel
 	 * @param string $document Document to train with
 	 * @param string $class_label Class label to assign the document to
 	 * @param array $options Tokenizer options array
+	 * @return bool True on success
 	 */
 	public function train($document, $class_label, $options = array())
 	{
@@ -47,13 +48,13 @@ class BayesToken extends NaiveBayesClassifierAppModel
 
 		// find out which tokens do we already have
 		$tokens = $this->getTokenCounters
+			(
+				array_keys($new_tokens),
+				array
 				(
-					array_keys($new_tokens),
-					array
-					(
-						'class' => $class['BayesClass']['id']
-					)
-				);
+					'class' => $class['BayesClass']['id']
+				)
+			);
 
 		foreach ($new_tokens as $token => $count)
 		{
@@ -97,6 +98,49 @@ class BayesToken extends NaiveBayesClassifierAppModel
 					break;
 				}
 			}
+		}
+
+		return $this->saveMany($tokens, array('deep' => true));
+	}
+
+	/**
+	 * Removes tokens from a document from the train set. Returns true on success.
+	 *
+	 * @param type $document Document to untrain
+	 * @param type $class_label Class for which the document was trained earlier
+	 * @param type $options Same options as for train()
+	 * @see BayesToken::train()
+	 */
+	public function untrain($document, $class_label, $options = array())
+	{
+		$new_tokens = $this->tokenize($document, $options);
+
+		$class = $this->BayesClass->findOrCreate($class_label);
+
+		// update the number of documents for this category
+		$class['BayesClass']['vector_count'] -= 1;
+		$this->BayesClass->save($class);
+
+		// unless the user is doing something fishy, we should
+		// get all the tokens here
+		$tokens = $this->getTokenCounters
+			(
+				array_keys($new_tokens),
+				array
+				(
+					'class' => $class['BayesClass']['id'],
+				)
+			);
+
+		foreach ($tokens as &$data)
+		{
+			if (empty($data['BayesTokenCounter']))
+			{
+				// should not happen unless user idiot or unit tests
+				continue;
+			}
+
+			$data['BayesTokenCounter'][0]['count'] -= 1; // @TODO: should $count be used instead?
 		}
 
 		return $this->saveMany($tokens, array('deep' => true));
