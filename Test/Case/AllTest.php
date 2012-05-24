@@ -11,18 +11,13 @@
 		GPL <http://www.gnu.org/licenses/gpl.html>
 */
 
-class AllNaiveBayesClassifierTests extends PHPUnit_Framework_TestSuite
+class AllNaiveBayesClassifierTests extends CakeTestSuite
 {
 	public static function suite()
 	{
-		$suite = new PHPUnit_Framework_TestSuite('All NaiveBayesClassifier tests');
+		$suite = new CakeTestSuite('All NaiveBayesClassifier tests');
 
-		$suite->addTestFile(dirname(__FILE__).DS.'Model'.DS.'BayesClassTest.php');
-		$suite->addTestFile(dirname(__FILE__).DS.'Model'.DS.'BayesTokenTest.php');
-
-		$suite->addTestFile(dirname(__FILE__).DS.'Controller'.DS.'Component'.DS.'ClassifierComponentTest.php');
-
-		$suite->addTestFile(dirname(__FILE__).DS.'Model'.DS.'Behavior'.DS.'ClassifiableBehaviorTest.php');
+		$suite->addTestDirectoryRecursive(App::pluginPath('NaiveBayesClassifier').'Test'.DS.'Case');
 
 		return $suite;
 	}
