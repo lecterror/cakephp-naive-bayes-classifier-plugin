@@ -84,10 +84,15 @@ Behaviour usage 2 - validation based on class:
 			);
 	}
 
+The Classifiable behaviour also exposes `train(...)`, `untrain(...)` and `classify(...)`
+methods to the model so you can call them directly:
+
+	$class = $this->Something->classify('Cave Johnson');
+
 You're done! For more options and usage examples, check out the plugin source for function
 descriptions which describe all the options, such as Laplace smoothing and class mapping for
 storing into database. Additionally, you can check out the unit tests which provide full
-examples on how to use the plugin with (hopefully) all options.
+examples on how to use the plugin with (hopefully) all the options.
 
 ## Contributing ##
 

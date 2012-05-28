@@ -135,6 +135,40 @@ class ClassifiableBehavior extends ModelBehavior
 		return true;
 	}
 
+
+	/**
+	 * This method is here only to expose BayesToken::train() to the model.
+	 *
+	 * @see BayesToken::train()
+	 */
+	public function train(Model $Model, $document, $class_label, $options = array())
+	{
+		return $this->BayesToken->train($document, $class_label, $options);
+	}
+
+
+	/**
+	 * This method is here only to expose BayesToken::untrain() to the model.
+	 *
+	 * @see BayesToken::untrain()
+	 */
+	public function untrain(Model $Model, $document, $class_label, $options = array())
+	{
+		return $this->BayesToken->untrain($document, $class_label, $options);
+	}
+
+
+	/**
+	 * This method is here only to expose BayesToken::classify() to the model.
+	 *
+	 * @see BayesToken::classify()
+	 */
+	public function classify(Model $Model, $document, array $options = array())
+	{
+		return $this->BayesToken->classify($document, $options);
+	}
+
+
 	private function _classify(Model $Model, $settings)
 	{
 		$fields = $settings['classify'];

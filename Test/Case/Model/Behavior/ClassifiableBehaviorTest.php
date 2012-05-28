@@ -210,4 +210,18 @@ class ClassifiableBehaviorTest extends CakeTestCase
 		$this->assertEqual($this->BehaviorTest->validationErrors, $expected);
 		$this->BehaviorTest->Behaviors->detach('NaiveBayesClassifier.Classifiable');
 	}
+
+	public function testMappedMethodsAvailability()
+	{
+		$this->BehaviorTest->Behaviors->attach
+			(
+				'NaiveBayesClassifier.Classifiable'
+			);
+
+		$this->assertEqual($this->BehaviorTest->train('Enlarge your rolex!', 'spam'), true);
+		$this->assertEqual($this->BehaviorTest->untrain('Enlarge your rolex!', 'spam'), true);
+
+		$result = $this->BehaviorTest->classify('This is a perfectly normal sentence about Steam games');
+		$this->assertEqual($result, 'ham');
+	}
 }
