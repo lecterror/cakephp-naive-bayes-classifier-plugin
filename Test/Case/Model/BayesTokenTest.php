@@ -12,6 +12,7 @@
 */
 
 App::uses('BayesToken', 'NaiveBayesClassifier.Model');
+App::uses('NaiveBayesClassifier', 'NaiveBayesClassifier.Lib');
 
 /**
  * BayesToken Test Case
@@ -24,6 +25,12 @@ class BayesTokenTest extends CakeTestCase
 	 * @var BayesToken
 	 */
 	public $BayesToken = null;
+
+	/**
+	 *
+	 * @var BayesClass
+	 */
+	public $BayesClass = null;
 
 /**
  * Fixtures
@@ -44,6 +51,7 @@ class BayesTokenTest extends CakeTestCase
  */
 	public function setUp() {
 		parent::setUp();
+		$this->BayesClass = ClassRegistry::init('NaiveBayesClassifier.BayesClass');
 		$this->BayesToken = ClassRegistry::init('NaiveBayesClassifier.BayesToken');
 	}
 
@@ -53,209 +61,11 @@ class BayesTokenTest extends CakeTestCase
  * @return void
  */
 	public function tearDown() {
+		unset($this->BayesClass);
 		unset($this->BayesToken);
+		NaiveBayesClassifier::reset();
 
 		parent::tearDown();
-	}
-
-	public function testGetTokenCountSingle()
-	{
-		$expected = array('BayesTokenCounter' => array('count_sum' => 114));
-		$result = $this->BayesToken->getTokenCount();
-		$this->assertEqual($result, $expected);
-
-		$expected = array('BayesTokenCounter' => array('count_sum' => 58));
-		$result = $this->BayesToken->getTokenCount(array('class' => 1));
-		$this->assertEqual($result, $expected);
-
-		$expected = array('BayesTokenCounter' => array('count_sum' => 13));
-		$result = $this->BayesToken->getTokenCount(array('token' => 21));
-		$this->assertEqual($result, $expected);
-
-		$expected = array('BayesTokenCounter' => array('count_sum' => 5));
-		$result = $this->BayesToken->getTokenCount(array('class' => 1, 'token' => 21));
-		$this->assertEqual($result, $expected);
-	}
-
-
-	public function testGetTokenCountMultiple()
-	{
-		$expected = array
-			(
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '1',
-						'count_sum' => '8'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '2',
-						'count_sum' => '5'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '3',
-						'count_sum' => '7'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '4',
-						'count_sum' => '2'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '5',
-						'count_sum' => '4'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '6',
-						'count_sum' => '7'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '7',
-						'count_sum' => '7'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '8',
-						'count_sum' => '4'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '9',
-						'count_sum' => '2'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '10',
-						'count_sum' => '7'
-					)
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '21',
-						'count_sum' => '5'
-					)
-				)
-			);
-
-		$result = $this->BayesToken->getTokenCount(array('class' => 1, 'multiple' => true));
-		$this->assertEqual($result, $expected);
-
-		$expected = array
-			(
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'bayes_token_id' => '21',
-						'count_sum' => '5'
-					),
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '2',
-						'bayes_token_id' => '21',
-						'count_sum' => '8'
-					),
-				),
-			);
-
-		$result = $this->BayesToken->getTokenCount(array('token' => 21, 'multiple' => true));
-		$this->assertEqual($result, $expected);
-
-		$expected = array
-			(
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'count_sum' => '58'
-					),
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '2',
-						'count_sum' => '56'
-					),
-				),
-			);
-
-		$result = $this->BayesToken->getTokenCount(array('multiple' => 'class'));
-		$this->assertEqual($result, $expected);
-
-		$expected = array
-			(
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '1',
-						'count_sum' => '5'
-					),
-				),
-				array
-				(
-					'BayesTokenCounter' => array
-					(
-						'bayes_class_id' => '2',
-						'count_sum' => '8'
-					),
-				),
-			);
-
-		$result = $this->BayesToken->getTokenCount(array('token' => 21, 'multiple' => 'class'));
-		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -494,203 +304,5 @@ class BayesTokenTest extends CakeTestCase
 
 		$result = $this->BayesToken->tokenize($input);
 		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testTrain method
- *
- * @return void
- */
-	public function testTrain()
-	{
-		$this->assertEqual($this->BayesToken->train('Enlarge your rolex!', 'spam'), true);
-
-		$expected = array
-			(
-				'BayesClass' => array
-				(
-					'id' => 1,
-					'label' => 'spam',
-					'vector_count' => 11
-				),
-			);
-
-		$result = $this->BayesToken->BayesClass->find('first', array('conditions' => array('label' => 'spam'), 'contain' => false));
-		$this->assertEqual($result, $expected);
-
-		$expected = array
-			(
-				array
-				(
-					'BayesToken' => array
-					(
-						'id' => 6,
-						'value' => 'enlarge'
-					),
-					'BayesTokenCounter' => array
-					(
-						array
-						(
-							'id' => 6,
-							'bayes_class_id' => 1,
-							'bayes_token_id' => 6,
-							'count' => 8
-						),
-					),
-				),
-				array
-				(
-					'BayesToken' => array
-					(
-						'id' => 5,
-						'value' => 'rolex'
-					),
-					'BayesTokenCounter' => array
-					(
-						array
-						(
-							'id' => 5,
-							'bayes_class_id' => 1,
-							'bayes_token_id' => 5,
-							'count' => 5
-						),
-					),
-				),
-				array
-				(
-					'BayesToken' => array
-					(
-						'id' => 22,
-						'value' => 'your'
-					),
-					'BayesTokenCounter' => array
-					(
-						array
-						(
-							'id' => 23,
-							'bayes_class_id' => 1,
-							'bayes_token_id' => 22,
-							'count' => 1
-						),
-					),
-				),
-			);
-
-		$result = $this->BayesToken->find
-			(
-				'all',
-				array
-				(
-					'contain' => array('BayesTokenCounter'),
-					'conditions' => array
-					(
-						'value' => array('enlarge', 'your', 'rolex')
-					),
-				)
-			);
-
-		$this->assertEqual($result, $expected);
-	}
-
-
-	public function testUntrain()
-	{
-		$this->assertEqual($this->BayesToken->untrain('Enlarge your rolex!', 'spam'), true);
-
-		$expected = array
-			(
-				'BayesClass' => array
-				(
-					'id' => 1,
-					'label' => 'spam',
-					'vector_count' => 9
-				),
-			);
-
-		$result = $this->BayesToken->BayesClass->find('first', array('conditions' => array('label' => 'spam'), 'contain' => false));
-		$this->assertEqual($result, $expected);
-
-		$expected = array
-			(
-				array
-				(
-					'BayesToken' => array
-					(
-						'id' => 6,
-						'value' => 'enlarge'
-					),
-					'BayesTokenCounter' => array
-					(
-						array
-						(
-							'id' => 6,
-							'bayes_class_id' => 1,
-							'bayes_token_id' => 6,
-							'count' => 6
-						),
-					),
-				),
-				array
-				(
-					'BayesToken' => array
-					(
-						'id' => 5,
-						'value' => 'rolex'
-					),
-					'BayesTokenCounter' => array
-					(
-						array
-						(
-							'id' => 5,
-							'bayes_class_id' => 1,
-							'bayes_token_id' => 5,
-							'count' => 3
-						),
-					),
-				),
-			);
-
-		$result = $this->BayesToken->find
-			(
-				'all',
-				array
-				(
-					'contain' => array('BayesTokenCounter'),
-					'conditions' => array
-					(
-						'value' => array('enlarge', 'your', 'rolex')
-					),
-				)
-			);
-
-		$this->assertEqual($result, $expected);
-	}
-
-
-/**
- * testClassify method
- *
- * @return void
- */
-	public function testClassify()
-	{
-		$result = $this->BayesToken->classify('This is a perfectly normal sentence about Steam games');
-		$this->assertEqual($result, 'ham');
-
-		$result = $this->BayesToken->classify('Buy cheap replica watches for shits and giggles!');
-		$this->assertEqual($result, 'spam');
-
-		$result = $this->BayesToken->classify('ambiguous sentence of replica code');
-		$this->assertEqual($result, false);
-
-		$result = $this->BayesToken->classify
-			(
-				'a bit less ambiguous sentence of cheap replica code, also, yello',
-				array
-				(
-					'threshold' => 2,
-				)
-			);
-		$this->assertEqual($result, false);
 	}
 }

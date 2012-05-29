@@ -12,27 +12,15 @@
 */
 
 App::uses('Component', 'Controller');
-App::uses('Hash', 'Utility');
-App::uses('BayesToken', 'NaiveBayesClassifier.Model');
+App::uses('NaiveBayesClassifier', 'NaiveBayesClassifier.Lib');
 
 class ClassifierComponent extends Component
 {
-	/**
-	 *
-	 * @var BayesToken
-	 */
-	public $BayesToken = null;
-
-
 	public function __construct(ComponentCollection $collection, $settings = array())
 	{
 		parent::__construct($collection, $settings);
-
 		$this->Controller = $collection->getController();
-
-		$this->BayesToken = ClassRegistry::init('NaiveBayesClassifier.BayesToken');
 	}
-
 
 	/**
 	 * 
@@ -56,7 +44,7 @@ class ClassifierComponent extends Component
 	 */
 	public function classify($document, array $options = array())
 	{
-		return $this->BayesToken->classify($document, $options);
+		return NaiveBayesClassifier::classify($document, $options);
 	}
 	
 	/**
@@ -74,7 +62,7 @@ class ClassifierComponent extends Component
 	 */
 	public function train($document, $class_label, $options = array())
 	{
-		return $this->BayesToken->train($document, $class_label, $options);
+		return NaiveBayesClassifier::train($document, $class_label, $options);
 	}
 
 	/**
@@ -92,6 +80,6 @@ class ClassifierComponent extends Component
 	 */
 	public function untrain($document, $class_label, $options = array())
 	{
-		return $this->BayesToken->untrain($document, $class_label, $options);
+		return NaiveBayesClassifier::untrain($document, $class_label, $options);
 	}
 }

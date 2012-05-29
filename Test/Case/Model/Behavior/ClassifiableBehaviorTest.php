@@ -12,6 +12,7 @@
 */
 
 App::uses('ClassifiableBehavior', 'NaiveBayesClassifier.Model/Behavior');
+App::uses('NaiveBayesClassifier', 'NaiveBayesClassifier.Lib');
 
 /**
  * Test class
@@ -70,7 +71,8 @@ class ClassifiableBehaviorTest extends CakeTestCase
  */
 	public function setUp() {
 		parent::setUp();
-		$this->BehaviorTest = new BehaviorTest();
+
+		$this->BehaviorTest = ClassRegistry::init('BehaviorTest');
 	}
 
 /**
@@ -80,6 +82,7 @@ class ClassifiableBehaviorTest extends CakeTestCase
  */
 	public function tearDown() {
 		unset($this->BehaviorTest);
+		NaiveBayesClassifier::reset();
 
 		parent::tearDown();
 	}

@@ -54,6 +54,7 @@ class BayesClassTest extends CakeTestCase
  */
 	public function tearDown() {
 		unset($this->BayesClass);
+		NaiveBayesClassifier::reset();
 
 		parent::tearDown();
 	}

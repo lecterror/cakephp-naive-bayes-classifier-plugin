@@ -11,26 +11,25 @@
 		GPL <http://www.gnu.org/licenses/gpl.html>
 */
 
-App::uses('Controller', 'Controller');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeResponse', 'Network');
-
-App::uses('BayesClass', 'NaiveBayesClassifier.Model');
-App::uses('BayesToken', 'NaiveBayesClassifier.Model');
-App::uses('ClassifierComponent', 'NaiveBayesClassifier.Controller/Component');
-
-
-class ClassifierComponentTestController extends Controller
-{
-	public $uses = null;
-}
+App::uses('NaiveBayesClassifier', 'NaiveBayesClassifier.Lib');
 
 /**
- * ClassifierComponent Test Case
+ * BayesToken Test Case
  *
  */
-class ClassifierComponentTest extends CakeTestCase
+class NaiveBayesClassifierTest extends CakeTestCase
 {
+	/**
+	 *
+	 * @var BayesToken
+	 */
+	public $BayesToken = null;
+
+	/**
+	 *
+	 * @var BayesClass
+	 */
+	public $BayesClass = null;
 
 /**
  * Fixtures
@@ -41,47 +40,16 @@ class ClassifierComponentTest extends CakeTestCase
 		(
 			'plugin.naive_bayes_classifier.bayes_class',
 			'plugin.naive_bayes_classifier.bayes_token',
-			'plugin.naive_bayes_classifier.bayes_token_counter'
+			'plugin.naive_bayes_classifier.bayes_token_counter',
 		);
-
-	/**
-	 *
-	 * @var Controller
-	 */
-	public $Controller = null;
-
-	/**
-	 *
-	 * @var ClassifierComponent
-	 */
-	public $Classifier = null;
-
-	/**
-	 *
-	 * @var BayesClass
-	 */
-	public $BayesClass = null;
-
-	/**
-	 *
-	 * @var BayesToken
-	 */
-	public $BayesToken = null;
 
 /**
  * setUp method
  *
  * @return void
  */
-	public function setUp()
-	{
+	public function setUp() {
 		parent::setUp();
-
-		$request = new CakeRequest('/');
-		$response = new CakeResponse();
-		$this->Controller = new ClassifierComponentTestController($request, $response);
-		$this->Controller->constructClasses();
-		$this->Classifier = new ClassifierComponent($this->Controller->Components);
 
 		$this->BayesClass = ClassRegistry::init('NaiveBayesClassifier.BayesClass');
 		$this->BayesToken = ClassRegistry::init('NaiveBayesClassifier.BayesToken');
@@ -92,10 +60,7 @@ class ClassifierComponentTest extends CakeTestCase
  *
  * @return void
  */
-	public function tearDown()
-	{
-		unset($this->Classifier);
-		unset($this->Controller);
+	public function tearDown() {
 		unset($this->BayesClass);
 		unset($this->BayesToken);
 
@@ -104,29 +69,13 @@ class ClassifierComponentTest extends CakeTestCase
 	}
 
 /**
- * testClassify method
- *
- * @return void
- */
-	public function testClassify()
-	{
-		$result = $this->Classifier->classify('This is a perfectly normal sentence about Steam games');
-		$this->assertEqual($result, 'ham');
-
-		$result = $this->Classifier->classify('Buy cheap replica watches for shits and giggles!');
-		$this->assertEqual($result, 'spam');
-
-		$result = $this->Classifier->classify('replica code');
-		$this->assertEqual($result, false);
-	}
-/**
  * testTrain method
  *
  * @return void
  */
 	public function testTrain()
 	{
-		$this->assertEqual($this->Classifier->train('Enlarge your rolex!', 'spam'), true);
+		$this->assertEqual(NaiveBayesClassifier::train('Enlarge your rolex!', 'spam'), true);
 
 		$expected = array
 			(
@@ -215,10 +164,9 @@ class ClassifierComponentTest extends CakeTestCase
 		$this->assertEqual($result, $expected);
 	}
 
-
 	public function testUntrain()
 	{
-		$this->assertEqual($this->Classifier->untrain('Enlarge your rolex!', 'spam'), true);
+		$this->assertEqual(NaiveBayesClassifier::untrain('Enlarge your rolex!', 'spam'), true);
 
 		$expected = array
 			(
@@ -287,5 +235,32 @@ class ClassifierComponentTest extends CakeTestCase
 			);
 
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testClassify method
+ *
+ * @return void
+ */
+	public function testClassify()
+	{
+		$result = NaiveBayesClassifier::classify('This is a perfectly normal sentence about Steam games');
+		$this->assertEqual($result, 'ham');
+
+		$result = NaiveBayesClassifier::classify('Buy cheap replica watches for shits and giggles!');
+		$this->assertEqual($result, 'spam');
+
+		$result = NaiveBayesClassifier::classify('ambiguous sentence of replica code');
+		$this->assertEqual($result, false);
+
+		$result = NaiveBayesClassifier::classify
+			(
+				'a bit less ambiguous sentence of cheap replica code, also, yello',
+				array
+				(
+					'threshold' => 2,
+				)
+			);
+		$this->assertEqual($result, false);
 	}
 }

@@ -13,6 +13,7 @@
 
 App::uses('ModelBehavior', 'Model');
 App::uses('BayesToken', 'NaiveBayesClassifier.Model');
+App::uses('NaiveBayesClassifier', 'NaiveBayesClassifier.Lib');
 
 /**
  * Automatic classification of a document.
@@ -56,16 +57,11 @@ class ClassifiableBehavior extends ModelBehavior
 {
 	public $settings = array();
 
-	public function __construct()
+	public function setup(Model $Model, $config)
 	{
-		parent::__construct();
+		parent::setup($Model, $config);
 
-		$this->BayesToken = ClassRegistry::init('NaiveBayesClassifier.BayesToken');
-	}
-
-	public function setup(Model $Model, $settings)
-	{
-		$this->settings[$Model->alias] = $settings;
+		$this->settings[$Model->alias] = $config;
 	}
 
 	public function cleanup(Model $Model)
@@ -143,7 +139,7 @@ class ClassifiableBehavior extends ModelBehavior
 	 */
 	public function train(Model $Model, $document, $class_label, $options = array())
 	{
-		return $this->BayesToken->train($document, $class_label, $options);
+		return NaiveBayesClassifier::train($document, $class_label, $options);
 	}
 
 
@@ -154,7 +150,7 @@ class ClassifiableBehavior extends ModelBehavior
 	 */
 	public function untrain(Model $Model, $document, $class_label, $options = array())
 	{
-		return $this->BayesToken->untrain($document, $class_label, $options);
+		return NaiveBayesClassifier::untrain($document, $class_label, $options);
 	}
 
 
@@ -165,7 +161,7 @@ class ClassifiableBehavior extends ModelBehavior
 	 */
 	public function classify(Model $Model, $document, array $options = array())
 	{
-		return $this->BayesToken->classify($document, $options);
+		return NaiveBayesClassifier::classify($document, $options);
 	}
 
 
@@ -190,7 +186,7 @@ class ClassifiableBehavior extends ModelBehavior
 			$options = $settings['options'];
 		}
 
-		$class = $this->BayesToken->classify($document, $options);
+		$class = NaiveBayesClassifier::classify($document, $options);
 
 		if ($class === false)
 		{

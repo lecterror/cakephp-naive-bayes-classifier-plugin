@@ -12,6 +12,7 @@
 */
 
 App::uses('NaiveBayesClassifierAppModel', 'NaiveBayesClassifier.Model');
+App::uses('BayesTokenCounter', 'NaiveBayesClassifier.Model');
 
 /**
  * @property BayesTokenCounter $BayesTokenCounter
@@ -20,7 +21,7 @@ class BayesClass extends NaiveBayesClassifierAppModel
 {
 	public $hasMany = array
 		(
-			'BayesTokenCounter'
+			'BayesTokenCounter' => array('className' => 'NaiveBayesClassifier.BayesTokenCounter'),
 		);
 /**
  * Validation rules
